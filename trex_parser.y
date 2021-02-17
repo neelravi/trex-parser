@@ -22,9 +22,10 @@ int symbol_table[26];
 %}
 
 
-/* Bison declarations below. */
-%token <val>  NUM                               /* Numbers                  */
-%token <str>  STR                               /* For strings              */
+/* Bison/Yacc declarations below. */
+%token <val>  INTEGER                           /* Integer                  */
+%token <val>  FLOAT                             /* float                    */
+%token <str>  STRING                            /* For strings              */
 %token WHILE IF ELSE ENDIF PRT                  /* For special constructs   */
 %token LE GE EQUAL LT GT LAND LOR NEG NOT       /* For logical constructs   */
 
@@ -95,7 +96,7 @@ stmt_list:
     ;
 
 expr: 
-    NUM                         { $$ = constant($1);   }                                /* a constant number */
+    INTEGER                     { $$ = constant($1);   }                                /* a constant number */
     | VARIABLE                  { $$ = identifier($1); }                                /* a variable name */    
 /* arithmatic */
     | expr '+' expr             { $$ = operator('+', 2, $1, $3); }                      /* addition of two operands */
