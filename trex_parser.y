@@ -11,23 +11,26 @@ nodeType *identifier(int i);
 nodeType *constant(int value);
 void freedom(nodeType *p);
 int interpret(nodeType *p);
-int yylex(void);
 
-void yyerror(char *s);
-int symbol_table[26]; // need to make this a hashtable and change every reference of it in every file
+// Original from the bison tutorial
+int yylex(void);
+void yyerror(char const *);
+
+int symbol_table[26]; 
+// need to make this a hashtable and change every reference of it in every file
 //Map<integer,integer> hm = new HashMap<>();
 %}
 
-%union { //Create a union to handle the integer input values, the index to the symble table for identifiers, or the
-         // pointer for an operator node
-    int input_Value;
-    char symbol_index;
-    nodeType *nodePointer;
-};
 
-%token <input_Value> INTEGER
-%token <symbol_index> VARIABLE
-%token WHILE IF PRT
+/* Bison declarations below. */
+%token <val>  NUM                               /* Numbers                  */
+%token <str>  STR                               /* For strings              */
+%token WHILE IF ELSE ENDIF PRT                  /* For special constructs   */
+%token LE GE EQUAL LT GT LAND LOR NEG NOT       /* For logical constructs   */
+
+
+%type  <val>  expr
+%type  <str>  string
 
 
 // arithmatic operators 
@@ -52,7 +55,12 @@ int symbol_table[26]; // need to make this a hashtable and change every referenc
 %nonassoc IFX
 %nonassoc ELSE
 
-
+%union { //Create a union to handle the integer input values, the index to the symble table for identifiers, or the
+         // pointer for an operator node
+    int input_Value;
+    char symbol_index;
+    nodeType *nodePointer;
+};
 
 
 
@@ -87,7 +95,7 @@ stmt_list:
     ;
 
 expr: 
-    INTEGER                     { $$ = constant($1);   }                                /* a constant number */
+    NUM                         { $$ = constant($1);   }                                /* a constant number */
     | VARIABLE                  { $$ = identifier($1); }                                /* a variable name */    
 /* arithmatic */
     | expr '+' expr             { $$ = operator('+', 2, $1, $3); }                      /* addition of two operands */
