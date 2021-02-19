@@ -64,21 +64,21 @@ int symbol_table[26];
 };
 
 
-
+/* grammar follows */
 %%
-
+    
 input:     /* empty line */ 
      | input stmt
     ;
 
 stmt:
     ';'				            
-    | expr ';'			        { $$ = $1;             }
-    | PRT expr ';'		        { $$ = $1; printf($1); }
-    | VARIABLE '=' expr ';'	    { $$ = assignment('=', $1, $3); }
-    | WHILE '(' expr ')' stmt   { $$ = operator(WHILE, $3, $5); }
-    | IF '(' expr ')' stmt %prec IFX     { $$ = operator(IF, $3, $5); }
-    | IF '(' expr ')' stmt ELSE stmt     { $$ = operator(ELSE,$3, $5, $7); }
+    | expr ';'			                { $$ = $1;             }
+    | PRT expr ';'		                { $$ = $1; printf($1); }
+    | VARIABLE '=' expr ';'	            { $$ = assignment('=', $1, $3); }
+    | WHILE '(' expr ')' stmt           { $$ = operator(WHILE, $3, $5); }
+    | IF '(' expr ')' stmt %prec IFX    { $$ = operator(IF, $3, $5); }
+    | IF '(' expr ')' stmt ELSE stmt    { $$ = operator(ELSE,$3, $5, $7); }
     ;
 
 expr: 
