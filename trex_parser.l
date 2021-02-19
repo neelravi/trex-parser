@@ -13,31 +13,36 @@
 void yyerror(char *);
 %}
 
+/* Regular expressions */
+integers        [-+]?[0-9]*
+floats          [-+]?[0-9]*[.][0-9]+
+strings         [a-zA-Z]+
+
+
 
 /* Rules */
 %%
-    /* Variables */
-[a-zA-Z]+               { yylval.str    = *yytext - 'a'; return STRING; }                  /* one or more copies of characters */
-[a-zA-Z0-9]+            { yylval.stran  = *yytext - 'a'; return STRING_ALPHA_NUMERIC; }    /* Review :: any alphanumeric string */
+    /* strings */
+{strings}                {sscanf(yytext, "%s", yylval.name); return (STRING);}              /* one or more copies of characters */
     /* Integers */
-[-+]?[0-9]*             { yylval.val    = atoi(yytext); return INTEGER; }                  /* integer of any lenght */
+{integers}               { yylval.number    = atoi(yytext); return INTEGER; }                  /* integer of any lenght */
     /* Floats */
-[-+]?[0-9]*[.][0-9]+    { yylval.val    = atof(yytext); return FLOAT; }                    /* float of any lenght */
+{floats}                 { yylval.number    = atof(yytext); return FLOAT; }                    /* float of any lenght */
     /* skip whitespaces and tabs */
-[ \t\n]+        ;                                                                       /* tabs and whitespaces are ignored */
+[ \t\n]+        ;                                                                           /* tabs and whitespaces are ignored */
     /* explicit text matching */
-"print"                 return PRT;
-"write"                 return PRT;
-"while"		            return WHILE;
-"if"		            return IF;
-"else"		            return ELSE;
-"endif"		            return ENDIF;
+"print"                 {return (PRT);}
+"write"                 {return (PRT);}
+"while"		            {return (WHILE);}
+"if"		            {return (IF);}
+"else"		            {return (ELSE);}
+"endif"		            {return (ENDIF);}
     /* operators */
 [-+/%*=;()\n]           { return *yytext; }
     /* operators */
 [NEGATION] 	            {return *yytext; }
 
-    /* Everything else is and error */
+    /* Everything else is an error */
 .                         yyerror("Character not in the alphabet");                     /* Note there is a dot at the beginning */
 %%
 /* Subroutines */
